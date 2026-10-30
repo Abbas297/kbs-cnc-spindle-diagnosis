@@ -1,0 +1,288 @@
+{
+  "domain": "CNC Milling Machine Spindle & Process Fault Diagnosis",
+  "version": "3.0",
+  "description": "Comprehensive rule-based system integrating operator heuristic observations with real-time physical telemetry (AI4I 2020 Predictive Maintenance Dataset)",
+
+  "equipment": {
+    "name": "CNC Vertical Machining Center",
+    "main_component": "Spindle & Tooling Assembly",
+    "sub_components": [
+      "Spindle Bearing Assembly (Front/Rear)",
+      "Spindle Electric Drive Motor & VFD Inverter",
+      "Spindle Heat Dissipation & Cooling Jacket",
+      "Cutting Tool & Tool Holder Assembly",
+      "Lubrication System"
+    ]
+  },
+
+  "symptoms": [
+    "unusual_noise",
+    "high_vibration",
+    "spindle_overheating",
+    "poor_surface_finish",
+    "increased_power_consumption",
+    "metal_particles_in_oil",
+    "heat_dissipation_hazard",
+    "power_surge_or_stall",
+    "critical_overstrain",
+    "excessive_tool_wear",
+    "random_hardware_anomaly"
+  ],
+
+  "faults": [
+    "bearing_wear",
+    "bearing_seizure",
+    "lack_of_lubrication",
+    "contamination",
+    "bearing_misalignment",
+    "heat_dissipation_failure",
+    "power_failure",
+    "overstrain_failure",
+    "tool_wear_failure",
+    "random_hardware_failure"
+  ],
+
+  "actions": {
+    "A1": {
+      "name": "Replace spindle bearings",
+      "priority": 1,
+      "cost": "High",
+      "downtime": "6-10 hours",
+      "who": "Specialist technician"
+    },
+    "A2": {
+      "name": "Clean and re-lubricate bearings",
+      "priority": 2,
+      "cost": "Low",
+      "downtime": "1-2 hours",
+      "who": "Maintenance technician"
+    },
+    "A3": {
+      "name": "Flush lubrication system and change oil",
+      "priority": 2,
+      "cost": "Medium",
+      "downtime": "2-3 hours",
+      "who": "Maintenance technician"
+    },
+    "A4": {
+      "name": "Check and correct spindle alignment",
+      "priority": 1,
+      "cost": "Medium",
+      "downtime": "4-6 hours",
+      "who": "Specialist technician"
+    },
+    "A5": {
+      "name": "Reduce cutting load and monitor",
+      "priority": 3,
+      "cost": "Very Low",
+      "downtime": "30 minutes",
+      "who": "Operator"
+    },
+    "A6": {
+      "name": "Replace cutting tool insert / assembly",
+      "priority": 1,
+      "cost": "Low",
+      "downtime": "15-30 minutes",
+      "who": "Operator / Tool Setter"
+    },
+    "A7": {
+      "name": "Inspect spindle drive motor and inverter VFD",
+      "priority": 1,
+      "cost": "Medium",
+      "downtime": "2-4 hours",
+      "who": "Electrical technician"
+    },
+    "A8": {
+      "name": "Service heat exchanger and flush spindle coolant jacket",
+      "priority": 1,
+      "cost": "Medium",
+      "downtime": "2-3 hours",
+      "who": "Maintenance technician"
+    },
+    "A9": {
+      "name": "De-rate cutting feed rate and re-calculate tool engagement",
+      "priority": 2,
+      "cost": "Very Low",
+      "downtime": "15 minutes",
+      "who": "CNC Programmer / Operator"
+    }
+  },
+
+  "rules": [
+    {
+      "id": "R1",
+      "if": ["unusual_noise", "high_vibration"],
+      "then_fault": "bearing_wear",
+      "cf": 0.80,
+      "why": "Noise and vibration together are the primary acoustic and dynamic indicators of rolling element bearing wear."
+    },
+    {
+      "id": "R2",
+      "if": ["spindle_overheating", "high_vibration", "unusual_noise"],
+      "then_fault": "bearing_seizure",
+      "cf": 0.95,
+      "why": "Co-occurrence of extreme thermal rise, severe vibration, and abnormal acoustic emission indicates imminent spindle bearing seizure."
+    },
+    {
+      "id": "R3",
+      "if": ["spindle_overheating", "unusual_noise"],
+      "then_fault": "lack_of_lubrication",
+      "cf": 0.75,
+      "why": "Thermal elevation and noise without severe high-amplitude vibration typically indicates lubricant starvation in raceways."
+    },
+    {
+      "id": "R4",
+      "if": ["metal_particles_in_oil", "high_vibration"],
+      "then_fault": "contamination",
+      "cf": 0.85,
+      "why": "Ferrous debris detected in lubricant circulation alongside vibration signifies raceway spalling and particulate contamination."
+    },
+    {
+      "id": "R5",
+      "if": ["poor_surface_finish", "high_vibration"],
+      "then_fault": "bearing_misalignment",
+      "cf": 0.70,
+      "why": "Deteriorated workpiece surface roughness combined with synchronous vibration indicates angular or parallel spindle misalignment."
+    },
+    {
+      "id": "R6",
+      "if": ["increased_power_consumption", "spindle_overheating"],
+      "then_fault": "bearing_wear",
+      "cf": 0.65,
+      "why": "Elevated motor current draw paired with localized temperature increase suggests excessive frictional drag from deteriorating bearings."
+    },
+    {
+      "id": "R7",
+      "if": ["fault:bearing_seizure"],
+      "then_action": "A1",
+      "cf": 0.95,
+      "why": "A seized bearing represents catastrophic failure requiring complete bearing replacement to prevent permanent spindle shaft damage."
+    },
+    {
+      "id": "R8",
+      "if": ["fault:bearing_wear"],
+      "then_action": "A1",
+      "cf": 0.70,
+      "why": "Significantly worn bearings must be scheduled for replacement before complete dimensional tolerance loss."
+    },
+    {
+      "id": "R9",
+      "if": ["fault:lack_of_lubrication"],
+      "then_action": "A2",
+      "cf": 0.88,
+      "why": "Replenishing grease/oil and clearing lubrication metering blocks resolves starvation faults."
+    },
+    {
+      "id": "R10",
+      "if": ["fault:contamination"],
+      "then_action": "A3",
+      "cf": 0.90,
+      "why": "Contaminated lubricant must be completely flushed and filtered to prevent rapid abrasive erosion of replacement components."
+    },
+    {
+      "id": "R11",
+      "if": ["fault:bearing_misalignment"],
+      "then_action": "A4",
+      "cf": 0.80,
+      "why": "Spindle shaft runout and housing alignment must be precision calibrated using dial test indicators."
+    },
+    {
+      "id": "R12",
+      "if": ["fault:bearing_wear"],
+      "then_action": "A5",
+      "cf": 0.50,
+      "why": "As an immediate interim measure, de-rating cutting load extends remaining useful life until planned maintenance downtime."
+    },
+    {
+      "id": "R13",
+      "if": ["fault:bearing_seizure"],
+      "then_safety": "CRITICAL EMERGENCY STOP: Spindle bearing seizure detected. Halt spindle rotation immediately to prevent catastrophic rotor-stator lockup.",
+      "cf": 1.0,
+      "why": "Continuing operation with a seized bearing will cause permanent thermal deformation of the spindle housing and motor burnout."
+    },
+    {
+      "id": "R14",
+      "if": ["heat_dissipation_hazard"],
+      "then_fault": "heat_dissipation_failure",
+      "cf": 0.98,
+      "why": "Heat dissipation failure (HDF) occurs when process-to-air temperature differential delta_T < 8.6 K and spindle rotational speed < 1380 rpm (Matzka IEEE 2020)."
+    },
+    {
+      "id": "R15",
+      "if": ["power_surge_or_stall"],
+      "then_fault": "power_failure",
+      "cf": 0.99,
+      "why": "Power failure (PWF) occurs when mechanical drive power P = Torque * angular_velocity falls below 3500 W or exceeds 9000 W (Matzka IEEE 2020)."
+    },
+    {
+      "id": "R16",
+      "if": ["critical_overstrain"],
+      "then_fault": "overstrain_failure",
+      "cf": 0.99,
+      "why": "Overstrain failure (OSF) occurs when the cumulative product of tool wear and cutting torque exceeds the variant threshold (11,000 for L, 12,000 for M, 13,000 for H) (Matzka IEEE 2020)."
+    },
+    {
+      "id": "R17",
+      "if": ["excessive_tool_wear"],
+      "then_fault": "tool_wear_failure",
+      "cf": 0.85,
+      "why": "Tool wear failure (TWF) zone reached: tool accumulated cutting duration has entered the 200-240 minute critical wear-out window (Matzka IEEE 2020)."
+    },
+    {
+      "id": "R18",
+      "if": ["random_hardware_anomaly"],
+      "then_fault": "random_hardware_failure",
+      "cf": 0.70,
+      "why": "Random process failure (RNF) detected: uncorrelated electrical transient or sensor glitch identified outside nominal physical failure envelopes."
+    },
+    {
+      "id": "R19",
+      "if": ["fault:heat_dissipation_failure"],
+      "then_action": "A8",
+      "cf": 0.95,
+      "why": "Heat dissipation failure requires immediate cleaning of the heat exchanger, inspection of coolant flow rate, and purging the spindle jacket."
+    },
+    {
+      "id": "R20",
+      "if": ["fault:power_failure"],
+      "then_action": "A7",
+      "cf": 0.95,
+      "why": "Power failure outside 3.5-9.0 kW envelope requires electrical inspection of the VFD inverter, current sensors, and motor stator windings."
+    },
+    {
+      "id": "R21",
+      "if": ["fault:overstrain_failure"],
+      "then_action": "A6",
+      "cf": 0.95,
+      "why": "Severe overstrain induces cutting tool fracture and plastic deformation; the tool insert must be replaced immediately."
+    },
+    {
+      "id": "R22",
+      "if": ["fault:overstrain_failure"],
+      "then_action": "A9",
+      "cf": 0.85,
+      "why": "Overstrain requires de-rating feed rate and spindle speed to avoid recurring workpiece overload."
+    },
+    {
+      "id": "R23",
+      "if": ["fault:tool_wear_failure"],
+      "then_action": "A6",
+      "cf": 0.92,
+      "why": "Tool wear life limit reached (200-240 min); tool insert must be indexed or replaced to prevent dimensional inaccuracy."
+    },
+    {
+      "id": "R24",
+      "if": ["fault:power_failure"],
+      "then_safety": "ELECTRICAL SAFETY ALERT: Spindle drive power anomalous (underload stall or dangerous power surge). Switch off CNC feed drive.",
+      "cf": 0.95,
+      "why": "Extreme power deviations threaten motor drive circuitry and present electrical or projectile hazard."
+    },
+    {
+      "id": "R25",
+      "if": ["fault:overstrain_failure"],
+      "then_safety": "HIGH MECHANICAL STRESS WARNING: Severe tool/spindle overstrain detected. Stop cutting cycle to prevent cutter explosion or spindle bent shaft.",
+      "cf": 0.95,
+      "why": "Torque-wear overload exceeds structural safety limits of the tool and machine assembly."
+    }
+  ]
+}
