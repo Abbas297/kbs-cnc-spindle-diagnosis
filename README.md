@@ -51,7 +51,6 @@ kbs_cnc_project/
 ├── tests/
 │   ├── test_cases.py           # Unit and scenario test suite (8 tests)
 │   └── validate_ai4i_dataset.py# Batch validation on 10,000 rows (confusion matrices & metrics)
-├── docs/                       # Project documentation & reference assets
 └── README.md                   # Complete system documentation
 ```
 
